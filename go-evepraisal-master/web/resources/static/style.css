@@ -1,0 +1,81 @@
+pre {
+  background-color: #eee;
+  padding: 2px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.paste-panel-heading {
+  padding-bottom: 0;
+}
+
+.appraisal-options div {
+  margin-bottom: 5px;
+}
+
+.results-table th {
+  cursor: pointer;
+  padding: 0 2px;
+}
+.results-table td {
+  padding: 0 2px;
+}
+
+.numeric-cell td {
+  font-family: monospace, monospace;
+}
+
+.tt-dropdown-menu {
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+  background-color: rgb(40, 40, 40);
+  padding: 3px 3px;
+  line-height: 24px;
+  color: #fff;
+}
+
+.tt-suggestion.tt-cursor, .tt-suggestion:hover {
+  color: #fff;
+  background-color: #0097cf;
+  cursor: pointer;
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+/* Bare bones style for the desired effect */
+.appraisal-debug-content {
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,113 @@
+
+{{ $fullpage := eq .UI.Path "/new-appraisal" }}
+
+<form id="appraisalform" action="/appraisal" method="POST" enctype="multipart/form-data">
+
+<!-- Config Modal -->
+<div class="modal fade" id="configure-appraisal-modal" tabindex="-1" role="dialog" aria-labelledby="configure-appraisal-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title float-left" id="configure-appraisal-modal-label">Appraisal Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{if .UI.User}}
+        <div class="form-group">
+          <label for="visibility">Visibility</label>
+          <select id="visibility" name="visibility" class="form-control">
+          {{range $visibility := .UI.Visibilities}}
+            <option value="{{$visibility.Name}}" {{if eq $.UI.SelectedVisibility $visibility.Name }}selected{{end}}>{{$visibility.DisplayName}}</option>
+          {{end}}
+          </select>
+        </div>
+        {{end}}
+
+        <div class="form-group">
+          <label for="persist">Persist appraisals for later</label>
+          <select id="persist" name="persist" class="form-control">
+            <option value="yes"{{if .UI.SelectedPersist}} selected{{end}}>Yes</option>
+            <option value="no"{{if not .UI.SelectedPersist}} selected{{end}}>No</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="price_percentage">Price Percentage</label>
+          <div class="input-group">
+            <input type="text" class="form-control number-only" value="{{$.UI.PricePercentage}}" placeholder="100" name="price_percentage" id="price_percentage">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="expire_after">Expire appraisals after a duration of time without views in seconds, minutes or hours. (E.G. 60s, 20m, 24h) (max of 720 hours; default is 360 hours, 15 days)</label>
+          <div class="input-group">
+            <input type="text" class="form-control" value="{{$.UI.ExpireAfter}}" placeholder="360h" name="expire_after" id="expire_after">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-default form-group">
+  <div class="card-body">
+    <h5>
+      {{if $fullpage}}
+        Create a Price Estimate
+      {{else}}
+        Quick Estimate
+      {{end}}
+      <div class="float-right align-top">
+        <button class="btn btn-secondary btn-sm btn-file">
+          <span class="fas fa-upload"></span>
+          <input type="file" name="uploadappraisal" id="uploadappraisal">
+        </button>
+        <a role="button" class="btn btn-secondary btn-sm" href="#configure-appraisal-modal" data-toggle="modal" data-target="#configure-appraisal-modal"><span class="fas fa-cog"></span></a>
+      </div>
+    </h5>
+    <div class="form-group">
+      <textarea class="form-control" id="raw_textarea" name="raw_textarea" rows="{{if $fullpage}}16{{else}}8{{end}}" placeholder="put stuff to appraise here. protip: ctrl+a, ctrl+c, ctrl+v" onclick="this.select()">{{.UI.RawTextAreaDefault}}</textarea>
+    </div>
+    <div class="form-inline float-right">
+      <div>
+        <select id="market" name="market" class="form-control form-control-sm">
+        {{range $market := .UI.Markets}}
+          <option value="{{$market.Name}}" {{if eq $.UI.SelectedMarket $market.Name }}selected{{end}}>{{$market.DisplayName}}</option>
+        {{end}}
+        </select>
+        <button type="reset" onclick="$('#raw_textarea').text('');" class="btn btn-sm">Reset</button>
+        <input type="submit" class="btn btn-primary btn-sm" href="submit" role="button" value="Submit &raquo;" />
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<script type="text/javascript">
+$(".number-only").bind("keypress", function(e){
+  if(isNaN(this.value+""+String.fromCharCode(e.charCode))) {
+    return false;
+  }
+});
+
+$(".number-only").bind("paste", function(e){
+  if(isNaN(e.originalEvent.clipboardData.getData('text'))) {
+    e.preventDefault();
+  }
+});
+
+$("body").bind("paste", function(e){
+    if ( !$(e.originalEvent.target).is( "input" ) && !$(e.originalEvent.target).is( "textarea" ) ) {
+      $("textarea#raw_textarea").val(e.originalEvent.clipboardData.getData('text'));
+    }
+});
+
+$("#uploadappraisal").change(function(e){
+  $('#appraisalform').submit();
+});
+</script>

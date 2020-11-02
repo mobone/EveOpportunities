@@ -1,0 +1,16 @@
+[Unit]
+Description=Evepraisal
+Requires=network.target
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/evepraisal
+WorkingDirectory=/usr/local/evepraisal
+User=evepraisal
+Group=evepraisal
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

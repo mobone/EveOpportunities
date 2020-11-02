@@ -1,0 +1,45 @@
+{{define "title"}}Evepraisal - Price check Eve Online items from Cargo Scans, Contracts, D-Scan, EFT, Inventory, Asset listing, Loot History, PI, Survey Scanner, Killmails, Wallet Transactions, Inventory, Assets{{end}}
+{{define "description"}}Price check Eve Online items from Cargo Scans, Contracts, D-Scan, EFT, Inventory, Asset listing, Loot History, PI, Survey Scanner, Killmails, Wallet TransactionsBlocks, Inventory, Assets{{end}}
+
+{{define "content"}}
+<div class="row">
+  <div class="col-md-4">
+    {{template "_paste-panel.html" .}}
+  </div>
+
+  <div class="col-sm-8">
+    <div class="float-right alert alert-dark" role="alert">
+      <strong>{{comma .Page.TotalAppraisalCount}} appraisals performed so far!</strong>
+    </div>
+    <h4>What is this?</h4>
+    <p>
+      Evepraisal is a tool for quickly getting bulk estimates of items from Eve Online.
+    </p>
+    <h4>How does this work?</h4>
+    <p>
+       Find something in Eve Online that you want to price check like a contract, cargo scan result, etc. Press <kbd>CTRL + A, CTRL + C</kbd>, then click on the lovely box to the left or above this and press <kbd>CTRL + V</kbd>. Submit and you should see a price breakdown of all the items.
+    </p>
+
+    <h4>What all can I paste in there?</h4>
+    <p>At first, this started as a simple cargo scan estimator but over time more formats have been added to the parser so you can use it as a more general price checker. Currently the following formats are supported:</p>
+    <h6>
+      <span class="badge badge-pill badge-dark">Inventory</span>
+      <span class="badge badge-pill badge-dark">Cargo Scanner</span>
+      <span class="badge badge-pill badge-dark">D-Scan</span>
+      <span class="badge badge-pill badge-dark">Bill of Materials</span>
+      <span class="badge badge-pill badge-dark">Loot History</span>
+      <span class="badge badge-pill badge-dark">Planetary Interaction</span>
+      <span class="badge badge-pill badge-dark">Survey Scanner</span>
+      <span class="badge badge-pill badge-dark">View Contents</span>
+      <span class="badge badge-pill badge-dark">Contracts</span>
+      <span class="badge badge-pill badge-dark">EFT Blocks</span>
+      <span class="badge badge-pill badge-dark">In-game Killmail</span>
+      <span class="badge badge-pill badge-dark">Wallet Transactions</span>
+      <span class="badge badge-pill badge-dark">Asset listings (named ships don't work)</span>
+      <span class="badge badge-pill badge-dark">Manual Entry - Example: "94812 Tritanium"</span>
+    </h6>
+    </ul>
+  </div>
+</div>
+{{end}}
+{{template "_layout.html" .}}

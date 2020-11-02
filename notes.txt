@@ -1,0 +1,2 @@
+go build -o fitting.so -buildmode=c-shared fitting.go
+go build -o assets.so -buildmode=c-shared assets.go

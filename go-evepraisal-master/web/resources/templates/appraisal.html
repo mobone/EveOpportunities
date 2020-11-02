@@ -1,0 +1,218 @@
+{{define "title"}}Evepraisal - Appraisal {{.Page.Appraisal.ID}}: {{prettybignumber .Page.Appraisal.Totals.Buy}} Buy / {{prettybignumber .Page.Appraisal.Totals.Sell}} Sell{{end}}
+{{define "description"}}{{range $i, $item := .Page.Appraisal.Items}}{{ if (lt $i 10) }}{{$item.TypeName}} - {{comma $item.Quantity}}&#xD;&#xA;{{end}}{{end}}{{end}}
+
+{{define "content"}}
+<!-- Delete Modal -->
+<div class="modal" id="delete-appraisal-modal" tabindex="-1" role="dialog" aria-labelledby="delete-appraisal-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title float-left" id="delete-appraisal-modal-label">Delete this appraisal?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Clicking the 'Delete' button below will delete this appraisal permanently. This action cannot be undone!
+      </div>
+      <div class="modal-footer">
+        <form name="delete-appraisal-{{.Page.Appraisal.ID}}" action="/a/delete/{{.Page.Appraisal.ID}}" method="POST">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger" role="button">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Permalink Modal -->
+<div class="modal" id="permalink-modal" tabindex="-1" role="dialog" aria-labelledby="permalink-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title float-left" id="permalink-modal-label">Permanent Link</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="permalink-input">This link is sharable to others. Anyone with this URL will be able to see this appraisal{{if .Page.Appraisal.Private}} even though this appraisal is private{{end}}.</label>
+        <input type="text" class="form-control" id="permalink-input" value="{{.UI.BaseURL}}{{.Page.Appraisal | appraisallink}}">
+      </div>
+      <div class="modal-footer">
+        <form name="delete-appraisal-{{.Page.Appraisal.ID}}" action="/a/delete/{{.Page.Appraisal.ID}}" method="POST">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Real Content -->
+<div class="row">
+  <div class="col-lg-4">
+    {{template "_paste-panel.html" .}}
+  </div>
+
+  <div class="col-lg-8">
+    {{ if .Page.Appraisal.Unparsed }}
+    <div class="alert alert-warning" role="alert">
+      <strong>Bad lines! {{ .Page.Appraisal.Unparsed | len }}</strong> of the lines could not be parsed.
+    </div>
+    {{end}}
+
+    {{if .Page.Appraisal.UsingPercentage}}
+    <div class="alert alert-warning" role="alert">
+      <strong>Percentage Prices:</strong> The prices shown below are <strong>{{.Page.Appraisal.PricePercentage}}%</strong> of the prices that you'd expect to see in the {{.Page.Appraisal.MarketName}} market.
+    </div>
+    {{end}}
+
+    {{if eq .Page.Appraisal.Kind "heuristic"}}
+    <div class="alert alert-danger" role="alert">
+    <strong>The heuristic parser was used to parse this result.</strong> This means that the format of the data you entered is unknown to Evepraisal and some guess-work was used to bring you the results below. Review closely for accuracy. If you think this is a format worth adding, <a href="https://github.com/evepraisal/go-evepraisal/issues/new?title=Unknown+Format&body=Appraisal+with+the+format:+{{.UI.BaseURLWithoutScheme}}/a/{{.Page.Appraisal.ID}}%0A%0ADescribe+the+format+(where+you+got+it,+etc)" target="_blank">submit an issue on github</a>.
+    </div>
+    {{end}}
+
+    {{if ne .Page.Appraisal.ID ""}}
+    <div class="appraisal-options float-right">
+      <div class="btn-group" role="group" aria-label="controls">
+        <a role="button" class="btn btn-primary btn-sm" href="#permalink-modal" data-toggle="modal" data-target="#permalink-modal"><span class="fas fa-bookmark"></span>  Permalink</a>
+        {{if not .Page.Appraisal.Live}}
+          <a role="button" class="btn btn-secondary btn-sm" href="{{.Page.Appraisal | liveAppraisalLink}}"><span class="fas fa-dot-circle"></span> Live Prices</a>
+        {{else}}
+          <a role="button" class="btn btn-secondary btn-sm" href="{{.Page.Appraisal | normalAppraisalLink}}"><span class="fas fa-history"></span> Frozen Prices</a></button>
+        {{end}}
+        <span class="dropdown">
+          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="exportDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
+          <div class="dropdown-menu" aria-labelledby="exportDropdownMenu">
+            <a class="dropdown-item" href="{{.Page.Appraisal | rawAppraisalLink}}" target="_blank"><span class="fas fa-align-justify"></span> Raw</a>
+            <a class="dropdown-item" href="{{.Page.Appraisal | jsonAppraisalLink}}" target="_blank"><span class="fas fa-chevron-right"></span> JSON</a>
+          </div>
+        </span>
+
+        {{if .Page.IsOwner}}
+        <a role="button" class="btn btn-danger btn-sm" href="#delete-appraisal-modal" data-toggle="modal" data-target="#delete-appraisal-modal"><span class="fas fa-trash"></span> Delete</a></button>
+        {{end}}
+      </div>
+    </div>
+    {{end}}
+
+    <div>
+      <span class="nowrap">
+        <strong>
+          {{if (and (ne .Page.Appraisal.ID "") .Page.Appraisal.Private)}}<span class="text-primary">private</span>{{end}} 
+          {{.Page.Appraisal.Kind}}
+        </strong>
+        priced {{if .Page.Appraisal.UsingPercentage}}
+         at <strong><span class="text-warning">{{.Page.Appraisal.PricePercentage}}%</span></strong> of <strong>{{.Page.Appraisal.MarketName}}</strong>
+        {{else}}
+         in <strong>{{.Page.Appraisal.MarketName}}</strong>
+        {{end}}
+        {{relativetime .Page.Appraisal.CreatedTime}}
+      </span>
+      <div>
+        <h5>
+          <span class="nowrap">{{ prettybignumber .Page.Appraisal.Totals.Sell }} <small>estimated sell value</small></span>
+          <span class="nowrap">{{ prettybignumber .Page.Appraisal.Totals.Buy }} <small>estimated buy value</small></span>
+        </h5>
+      </div>
+    </div>
+
+    <table id="results" class="table table-condensed table-striped results-table">
+      <thead>
+        <tr class="header">
+          <th class="text-center">Qty</th>
+          <th>Item</th>
+          <th class="text-right"><span class="nowrap">Volume (m<sup>3</sup>)<br />Volume Total</span></th>
+          <th class="text-right"><span class="nowrap">Single (sell)<br />Single (buy)</span></th>
+          <th class="text-right"><span class="nowrap">Total (sell)<br />Total (buy)</span></th>
+          <th class="text-right"><span class="nowrap">ISK/m<sup>3</sup> (sell)</span><br><span class="nowrap">ISK/m3 (buy)</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      {{range $i, $item := .Page.Appraisal.Items}}
+      {{ if (or $.Page.ShowFull (lt $i 100)) }}
+        <tr class="{{if eq $item.TypeID 0}}table-danger{{else if eq $item.Prices.All.Volume 0}}table-info{{else if $item.Extra.BPC}}table-info{{end}}">
+          <td class="numeric-cell text-center align-middle" data-sort-value="-{{$item.Quantity}}">{{comma $item.Quantity}}</td>
+          <td class="align-middle">
+            {{if (and $item.TypeName (lt $i 30))}}
+            <a href="/item/{{$item.TypeID}}">
+              <img class="float-left media-object" src="https://imageserver.eveonline.com/Type/{{$item.TypeID}}_32.png" alt="{{$item.TypeName}}">
+            </a>
+            &nbsp;
+            {{end}}
+            <a href="/item/{{$item.TypeID}}" class="text-light">
+              <strong>{{if $item.TypeName}}{{$item.TypeName}}{{else}}{{$item.Name}}{{end}}{{if $item.Extra.BPC}} (Copy)</a>
+              <span class="badge badge-primary">Runs: {{$item.Extra.BPCRuns}}</span>{{else}}</a>{{end}}
+              {{if ne $item.Extra.PlayerName ""}}<span class="badge badge-primary">{{$item.Extra.PlayerName}}</span>{{end}}
+              </strong>
+          </td>
+          <td class="numeric-cell text-right align-middle" data-sort-value="-{{$item.TypeVolume | printf "%f"}}">{{humanizeVolume $item.TypeVolume }}<br />{{humanizeVolume $item.TotalVolume }}</td>
+          <td class="numeric-cell text-right" data-sort-value="-{{$item.SingleRepresentativePrice | printf "%f"}}">
+            {{commaf $item.SellPrice}}<br />
+            {{commaf $item.BuyPrice}}</td>
+          <td class="numeric-cell text-right" data-sort-value="-{{$item.RepresentativePrice | printf "%f"}}">
+            {{commaf $item.SellTotal}}<br />
+            {{commaf $item.BuyTotal}}</td>
+          <td class="numeric-cell text-right" data-sort-value="-{{$item.SellISKVolume | printf "%f"}}">
+            {{commaf $item.SellISKVolume}}<br />
+            {{commaf $item.BuyISKVolume}}
+          </td>
+        </tr>
+      {{end}}
+      {{end}}
+      </tbody>
+      <tfoot>
+        {{if (and (not $.Page.Appraisal.ID) (ge (len .Page.Appraisal.Items) 100))}}
+        <tr>
+          <td class="text-center bg-dark text-white" colspan="6">There are too many results to on one page.</td>
+        </tr>
+        {{end}}
+        {{if (and $.Page.Appraisal.ID (not $.Page.ShowFull) (ge (len .Page.Appraisal.Items) 100))}}
+        <tr>
+          <td class="text-center bg-dark text-white" colspan="6">There are too many results to show. <a href="/a/{{.Page.Appraisal.ID}}?full=true" class="alert-link">Click here to see all <strong>{{.Page.Appraisal.Items | len }}</strong> results.</a> Warning: The page might be slow.</td>
+        </tr>
+        {{end}}
+        <tr>
+          <td></td>
+          <td colspan="3" class="text-right">Total Volume:<br/>
+    Total Sell Value:<br/>
+    Total Buy Value:<br/></td>
+          <td class="text-right">{{commaf .Page.Appraisal.Totals.Volume}}<br/>
+    {{commaf .Page.Appraisal.Totals.Sell}}<br/>
+    {{commaf .Page.Appraisal.Totals.Buy}}
+            </td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <script type="text/javascript">
+      {{if ne .Page.Appraisal.ID ""}}
+      window.history.replaceState({}, "", "{{.Page.Appraisal | appraisallink}}");
+      {{end}}
+      $(document).ready(function() {
+        $('#permalink-modal').on('shown.bs.modal', function (event) {
+          $('#permalink-input').select();
+        });
+
+        $("#results").tablesorter({
+          textExtraction : function(node, table, cellIndex){
+              n = $(node);
+              return n.attr('data-sort-value') || n.text();
+          },
+          headers: {
+             0: { sorter: 'digit', sortInitialOrder: 'desc' },
+             2: { sorter: 'digit', sortInitialOrder: 'desc' },
+             3: { sorter: 'digit', sortInitialOrder: 'desc' },
+             4: { sorter: 'digit', sortInitialOrder: 'desc' },
+             5: { sorter: 'digit', sortInitialOrder: 'desc' }
+          }
+        });
+        $('[data-toggle="tooltip"]').tooltip()
+      });
+    </script>
+  </div>
+</div>
+{{end}}
+{{template "_layout.html" .}}
