@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
 
 
-        with Pool(10) as p:
+        with Pool(30) as p:
             results = p.map(parse_data, item_list)
 
 
