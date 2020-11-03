@@ -16,9 +16,11 @@ c = conn.cursor()
 
 
 def add_to_bad_ids(id, name):
-    c.execute('insert into bad_ids values (%s, "%s")' % (id, name.replace("'",'')))
-    conn.commit()
-    print('\t\t\t\tinserted bad item '+name)
+    try:
+        c.execute('insert into bad_ids values (%s, "%s")' % (id, name.replace("'",'')))
+        conn.commit()
+    except:
+        pass
 
 def check_in_bad(type_id, item_name):
     if 'SKIN' in item_name:
@@ -26,8 +28,8 @@ def check_in_bad(type_id, item_name):
     try:
         found_bad_id = pd.read_sql('select * from bad_ids where item_id==%s' % type_id, conn)
     except Exception as e:
-        print('EXCEPTION ', e)
-        return False
+            return False
+
     if len(found_bad_id)>=1:
         #print('skipping\t\t\t\t\t', item_name)
         return True
@@ -50,14 +52,14 @@ def parse_data(item):
 
 
         if 'exceeded' in market_history.text.lower():
-            #print('rate limited exceeded, sleeping')
+            print('rate limited exceeded, sleeping')
             time.sleep(30)
             continue
         if 'type not found' in market_history.text.lower():
             add_to_bad_ids(type_id, item_name)
             return []
         if 'error' in market_history.text.lower():
-            #print(market_history.text)
+            print('error ', market_history.text)
             time.sleep(60)
         try:
             item_history_df = pd.DataFrame(market_history.json())

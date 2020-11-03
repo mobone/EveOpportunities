@@ -65,6 +65,7 @@ def parse_data(item):
         buy_order_count = jita_items_data['buyOrderCount']
         sell_trend = jita_items_data['sellPriceMedian30Delta']
         buy_trend = jita_items_data['buyPriceMedian30Delta']
+        print(item_name, sell_price)
 
         return [type_id, item_name, sell_price, buy_price, sell_volume, buy_volume, sell_order_count, buy_order_count, sell_trend, buy_trend]
         # sellPriceMin,volume,buyPriceMax
@@ -82,7 +83,7 @@ if __name__ == '__main__':
     for key, row in items_df.iterrows():
         item_list.append((row['name'].replace('’',"'"), row['typeid']))
 
-    with Pool(60) as p:
+    with Pool(20) as p:
         results = p.map(parse_data, item_list)
     items = []
     for i in results:
