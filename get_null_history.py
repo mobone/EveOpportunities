@@ -23,7 +23,11 @@ def add_to_bad_ids(id, name):
 def check_in_bad(type_id, item_name):
     if 'SKIN' in item_name:
         return True
-    found_bad_id = pd.read_sql('select * from bad_ids where item_id==%s' % type_id, conn)
+    try:
+        found_bad_id = pd.read_sql('select * from bad_ids where item_id==%s' % type_id, conn)
+    except Exception as e:
+        print('EXCEPTION ', e)
+        return False
     if len(found_bad_id)>=1:
         #print('skipping\t\t\t\t\t', item_name)
         return True
@@ -90,7 +94,7 @@ if __name__ == '__main__':
 
     regions_df = pd.read_csv('regions.csv')
     for key, region_row in regions_df.iterrows():
-
+        start_time = time.time()
         s = requests.Session()
         print(region_row['Name']+'_'+str(region_row['ID']))
         item_list = []
@@ -102,7 +106,7 @@ if __name__ == '__main__':
 
 
 
-        with Pool(20) as p:
+        with Pool(10) as p:
             results = p.map(parse_data, item_list)
 
 
@@ -115,3 +119,5 @@ if __name__ == '__main__':
         print(df)
         print()
         df.to_sql(region_row['Name']+'_'+str(region_row['ID']), conn, index=False, if_exists='replace')
+        end_time = time.time()
+        print("time: ", end_time - start_time)
