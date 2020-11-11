@@ -74,10 +74,10 @@
             <th scope = "col">Buy Price</th>
             <th scope = "col">Profit</th>
             <th scope = "col">%</th>
-            <th scope = "col">Vol/Day</th>
+            <!-- <th scope = "col">Vol/Day</th> -->
             <!-- <th scope = "col">Cost</th> -->
-            <!--<th scope = "col">10 Day Volume</th>> -->
-            <!--<th scope = "col">Days Sold</th>> -->
+            <th scope = "col">10 Day Volume</th>
+            <th scope = "col">Days Sold</th>
           </tr>
         </thead>
 
@@ -89,10 +89,10 @@
           <td>{{ item['buy_price'] }}</td>
           <td>{{ item['profit'] }}</td>
           <td>{{ item['profit_percent'] }}%</td>
-          <td>{{ item['vol_per_day'] }}</td>
+          <!-- <td>{{ item['vol_per_day'] }}</td> -->
           <!-- <td>{{ item['cost'] }}</td> -->
-          <!--<td>{{ item['total_volume'] }}</td>-->
-          <!--<td>{{ item['num_days'] }}</td>-->
+          <td>{{ item['total_volume'] }}</td>
+          <td>{{ item['num_days'] }}</td>
         </tr>
       {% endfor %}
       </table>
