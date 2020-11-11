@@ -65,7 +65,7 @@ def parse_data(item):
         buy_order_count = jita_items_data['buyOrderCount']
         sell_trend = jita_items_data['sellPriceMedian30Delta']
         buy_trend = jita_items_data['buyPriceMedian30Delta']
-        #print(item_name, sell_price)
+        print(item_name, sell_price)
 
         return [type_id, item_name, sell_price, buy_price, sell_volume, buy_volume, sell_order_count, buy_order_count, sell_trend, buy_trend]
         # sellPriceMin,volume,buyPriceMax
