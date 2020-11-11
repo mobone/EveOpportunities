@@ -16,7 +16,7 @@ app.set('view engine', 'handlebars');
 
 // ---- page routing & api routing ---- 
 require("./server/routes/html-routes.js")(app);
-// require("./routes/api-routes.js")(app);
+require("./server/routes/api-routes.js")(app);
 
 app.listen(PORT, function () {
     console.log("Server listening on http://localhost:" + PORT);
