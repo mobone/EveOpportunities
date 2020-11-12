@@ -17,6 +17,20 @@ module.exports = function (app) {
     });
 
 
+    app.get("/trade-hub", function (req, res) {
+        try {
+            // change this URL to be the tradehub URL
+            axios.get("http://13.58.61.47:5000/api/v1/items/ranked?emphasized=profit,profit%20percent&history_region_id=Etherium_Reach_10000027")
+            .then((response)=> { 
+            res.render("tradeHub", { item: response.data });
+            });
+        } catch (err) {
+            if (err) throw err;
+        }   
+        
+    });
+
+
 
 
     app.get("/charts", function (req, res) {
