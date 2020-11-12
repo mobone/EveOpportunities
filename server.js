@@ -1,12 +1,13 @@
 const express = require('express');
+const cors = require('cors');
 let expHandleBars = require('express-handlebars');
 
 
 let PORT = process.env.PORT || 8080;
 let app = express();
 
-app.use(express.static("./public/"));
-
+app.use(express.static("./public"));
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
