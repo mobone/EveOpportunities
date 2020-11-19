@@ -56,11 +56,13 @@ def parse_data(item):
             time.sleep(30)
             continue
         if 'type not found' in market_history.text.lower():
+            print('adding to bad ids', item_name)
             add_to_bad_ids(type_id, item_name)
             return []
         if 'error' in market_history.text.lower():
             print('error ', market_history.text)
-            time.sleep(60)
+            time.sleep(30)
+            continue
         try:
             item_history_df = pd.DataFrame(market_history.json())
         except:
@@ -71,7 +73,7 @@ def parse_data(item):
             return []
 
         item_history_df['date'] = pd.to_datetime(item_history_df['date'])
-        start_date = datetime.datetime.now() - datetime.timedelta(10)
+        start_date = datetime.datetime.now() - datetime.timedelta(31)
         item_history_df = item_history_df[item_history_df['date'] >= start_date]
 
         if item_history_df.empty:

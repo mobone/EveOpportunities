@@ -31,13 +31,15 @@ request_json = '''
                 '''
 s = requests.Session()
 
-def check_in_bad(type_id):
+def check_in_bad(type_id, item_name):
     if 'SKIN' in item_name:
         return True
-    found_bad_id = pd.read_sql('select * from bad_ids where item_id==%s' % type_id, conn)
-    if len(found_bad_id)>=1:
-        print('skipping\t\t\t\t\t', item_name)
+    if 'Blueprint' in item_name:
         return True
+    #found_bad_id = pd.read_sql('select * from bad_ids where item_id==%s' % type_id, conn)
+    #if len(found_bad_id)>=1:
+    #    print('skipping\t\t\t\t\t', item_name)
+    #    return True
 
     return False
 
@@ -45,7 +47,7 @@ def parse_data(item):
 
     item_name, type_id = item
 
-    if check_in_bad == True:
+    if check_in_bad(type_id, item_name) == True:
         return
 
     try:
