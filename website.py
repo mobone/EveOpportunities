@@ -29,7 +29,7 @@ def get_ranked_items():
     else:
         emphasized = []
 
-    print(emphasized)
+    #print(emphasized)
 
     conn = sqlite3.connect('EveFinder.db')
     sql = '''select jita_prices.item_id, jita_prices.item_name, item_details.item_type,
@@ -51,7 +51,7 @@ def get_ranked_items():
     df['profit_percent'] = df['profit_percent'] * 100
 
     df['vol_per_day'] = df['total_volume'] / 10.0
-    print(df)
+    #print(df)
 
     df = df[['item_id', 'item_name', 'item_type', 'buy_price', 'avg', 'profit', 'profit_percent', 'total_volume', 'num_days', 'item_volume', 'vol_per_day', 'cost', 'count']]
 
@@ -123,11 +123,7 @@ def get_ranked_items():
 
 
     df = df.sort_values(by=['total rank'])
-    print(df)
-    try:
-        df.to_csv('test.csv')
-    except:
-        pass
+    #print(df)
     df = df.head(100)
 
     return df.to_json(orient='records')
