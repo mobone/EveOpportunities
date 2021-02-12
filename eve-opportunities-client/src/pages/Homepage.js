@@ -1,5 +1,13 @@
 import React from "react";
+import Dashboard from "../components/Dashboard.js";
 
-export default function Homepage() {
-    return <h1> Hello </h1>
+function Homepage() {
+
+    return(
+        <div>
+            <Dashboard />
+        </div>
+    )
 }
+
+export default Homepage;
