@@ -8,7 +8,7 @@ module.exports = function (app) {
         try {
             axios.get("http://73.164.50.141:5000/api/v1/items/ranked?emphasized=profit,profit%20percent&history_region_id=Etherium_Reach_10000027")
             .then((response)=> { 
-            res.render("profit", { item: response.data });
+            res.render("hubToRegion", { item: response.data });
             });
         } catch (err) {
             if (err) throw err;
