@@ -1,11 +1,11 @@
 import React from "react";
-import Dashboard from "../components/Dashboard.js";
+import SearchForm from "../components/SearchForm";
 
 function Homepage() {
 
     return(
         <div>
-            <Dashboard />
+            <SearchForm />
         </div>
     )
 }
