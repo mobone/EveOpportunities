@@ -60,8 +60,9 @@ def parse_data(item):
             add_to_bad_ids(type_id, item_name)
             return []
         if 'error' in market_history.text.lower():
-            print('error ', market_history.text)
-            time.sleep(30)
+            print('error ', market_history.text, item_name)
+            print(url)
+            time.sleep(15)
             continue
         try:
             item_history_df = pd.DataFrame(market_history.json())

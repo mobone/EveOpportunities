@@ -50,14 +50,121 @@
           </li>
           -->
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+
       </div>
     </nav>
 
     <main role="main" class="container">
+      <form class="form-inline my-2 my-lg-0">
+
+
+      <label for="hub">From: </label>
+      <select id="hub" name="hub">
+        <option value="Jita">Jita</option>
+        <option value="Amarr">Amarr</option>
+        <option value="Rens">Rens</option>
+        <option value="Dodixie">Dodixie</option>
+        <option value="Hek">Hek</option>
+      </select>
+      <label for="region"> To: </label>
+      <select id="region" name="region">
+        <option value="Aridia">Aridia</option>
+        <option value="Black Rise">Black Rise</option>
+        <option value="Branch">Branch</option>
+        <option value="Catch">Catch</option>
+        <option value="Cloud Ring">Cloud Ring</option>
+        <option value="Cobalt Edge">Cobalt Edge</option>
+        <option value="Curse">Curse</option>
+        <option value="Deklein">Deklein</option>
+        <option value="Delve">Delve</option>
+        <option value="Derelik">Derelik</option>
+        <option value="Detorid">Detorid</option>
+        <option value="Devoid">Devoid</option>
+        <option value="Domain">Domain</option>
+        <option value="Esoteria">Esoteria</option>
+        <option value="Essence">Essence</option>
+        <option value="Etherium Reach">Etherium Reach</option>
+        <option value="Everyshore">Everyshore</option>
+        <option value="Fade">Fade</option>
+        <option value="Feythabolis">Feythabolis</option>
+        <option value="Fountain">Fountain</option>
+        <option value="Geminate">Geminate</option>
+        <option value="Genesis">Genesis</option>
+        <option value="Great Wildlands">Great Wildlands</option>
+        <option value="Heimatar">Heimatar</option>
+        <option value="Immensea">Immensea</option>
+        <option value="Impass">Impass</option>
+        <option value="Insmother">Insmother</option>
+        <option value="Kador">Kador</option>
+        <option value="Khanid">Khanid</option>
+        <option value="Kor-Azor">Kor-Azor</option>
+        <option value="Lonetrek">Lonetrek</option>
+        <option value="Malpais">Malpais</option>
+        <option value="Metropolis">Metropolis</option>
+        <option value="Molden Heath">Molden Heath</option>
+        <option value="Oasa">Oasa</option>
+        <option value="Omist">Omist</option>
+        <option value="Outer Passage">Outer Passage</option>
+        <option value="Outer Ring">Outer Ring</option>
+        <option value="Paragon Soul">Paragon Soul</option>
+        <option value="Period Basis">Period Basis</option>
+        <option value="Perrigen Falls">Perrigen Falls</option>
+        <option value="Placid">Placid</option>
+        <option value="Pochven">Pochven</option>
+        <option value="Providence">Providence</option>
+        <option value="Pure Blind">Pure Blind</option>
+        <option value="Querious">Querious</option>
+        <option value="Scalding Pass">Scalding Pass</option>
+        <option value="Sinq Laison">Sinq Laison</option>
+        <option value="Solitude">Solitude</option>
+        <option value="Stain">Stain</option>
+        <option value="Syndicate">Syndicate</option>
+        <option value="Tash-Murkon">Tash-Murkon</option>
+        <option value="Tenal">Tenal</option>
+        <option value="Tenerifis">Tenerifis</option>
+        <option value="The Bleak Lands">The Bleak Lands</option>
+        <option value="The Citadel">The Citadel</option>
+        <option value="The Forge">The Forge</option>
+        <option value="The Kalevala Expanse">The Kalevala Expanse</option>
+        <option value="The Spire">The Spire</option>
+        <option value="Tribute">Tribute</option>
+        <option value="Vale of the Silent">Vale of the Silent</option>
+        <option value="Venal">Venal</option>
+        <option value="Verge Vendor">Verge Vendor</option>
+        <option value="Wicked Creek">Wicked Creek</option>
+      </select>
+      <br>
+      <label for="min_profit">Minimum Profit:</label>
+      <input type="text" id="minimum_profit" name="minimum_profit" value="1,000,000" size=7> isk &nbsp
+      <input type="submit" value="Search">
+      </form>
+      <br>
+      <label for="emphasized">Emphasize:</label><br>
+      <input type="checkbox" id="emphasize_profit" name="emphasize_profit" value="Profit">Profit
+      <input type="checkbox" id="emphasize_profit_percent" name="emphasize_profit_percent" value="Profit Percent">Profit Percent
+      <input type="checkbox" id="emphasize_volume" name="emphasize_volume" value="Volume">Volume
+      <input type="checkbox" id="emphasize_days_sold" name="emphasize_days_sold" value="Days Sold">Days Sold
+      <br>
+      <br>
+
+      <label for="item_types">Item Types:</label><br>
+      <input type="checkbox" checked id="item_types" name="Ammunition & Charges" value="Ammunition & Charges">Ammunition & Charges
+      <input type="checkbox" checked id="item_types" name="Drones" value="Drones">Drones
+      <input type="checkbox" checked id="item_types" name="Implants & Boosters" value="Implants & Boosters">Implants & Boosters
+      <!--<input type="checkbox" checked id="item_types" name="Manufacture & Research" value="Manufacture & Research">Manufacture & Research-->
+      <input type="checkbox" checked id="item_types" name="Pilots Services" value="Pilots Services">Pilots Services
+      <input type="checkbox" checked id="item_types" name="Planetary Infrastructure" value="Planetary Infrastructure">Planetary Infrastructure
+      <input type="checkbox" checked id="item_types" name="Ship and Module Modifications" value="Ship and Module Modifications">Ship and Module Modifications
+      <input type="checkbox" checked id="item_types" name="Ship Equipment" value="Ship Equipment">Ship Equipment
+      <input type="checkbox" checked id="item_types" name="Ships" value="Ships">Ships
+
+
+
+      <input type="checkbox" checked id="item_types" name="Structures" value="Structures">Structures
+
+
+
+
       <h2>From Jita to Etherium Reach</h2>
       <!--
       <div class="starter-template">
@@ -72,11 +179,12 @@
             <th scope = "col">Item Name</th>
             <th scope = "col">Item Type</th>
             <th scope = "col">Buy Price</th>
+            <th scope = "col">Sell Price</th>
             <th scope = "col">Profit</th>
             <th scope = "col">%</th>
             <!-- <th scope = "col">Vol/Day</th> -->
             <!-- <th scope = "col">Cost</th> -->
-            <th scope = "col">10 Day Volume</th>
+            <th scope = "col">30 Day Volume</th>
             <th scope = "col">Days Sold</th>
           </tr>
         </thead>
@@ -87,6 +195,7 @@
           <td>{{ item['item_name'] }}</td>
           <td>{{ item['item_type'] }}</td>
           <td>{{ item['buy_price'] }}</td>
+          <td>{{ item['avg'] }}</td>
           <td>{{ item['profit'] }}</td>
           <td>{{ item['profit_percent'] }}%</td>
           <!-- <td>{{ item['vol_per_day'] }}</td> -->

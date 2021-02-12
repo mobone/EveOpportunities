@@ -14,9 +14,11 @@ def get_ranked_items_page():
     ranked_items = get_ranked_items()
     return render_template('ranked_items.html', ranked_items = eval(ranked_items))
 
+@app.route('/api/v1/items/trade_hub', methods = ['GET'])
+def get_trade_hub_items():
+    sql = '''select * from {0} left join {0} on {0}.item_id == '''
 
-
-@app.route('/api/v1/items/ranked', methods = ['GET'])
+@app.route('/api/v1/items/ranked', methods = ['GET','POST'])
 def get_ranked_items():
 
     query_parameters = request.args
@@ -48,22 +50,25 @@ def get_ranked_items():
     df['profit'] = df['avg'] - df['buy_price'] - df['cost']
     df['profit_percent'] = df['profit']/df['buy_price']
 
+    #df = df[df['profit_percent']>.07]
     df['profit_percent'] = df['profit_percent'] * 100
 
-    df['vol_per_day'] = df['total_volume'] / 10.0
+    df['vol_per_day'] = df['total_volume'] / 30.0
     #print(df)
 
-    df = df[['item_id', 'item_name', 'item_type', 'buy_price', 'avg', 'profit', 'profit_percent', 'total_volume', 'num_days', 'item_volume', 'vol_per_day', 'cost', 'count']]
+    df = df[['item_id', 'item_name', 'item_type', 'buy_price', 'avg', 'profit', 'profit_percent', 'total_volume', 'num_days', 'item_volume', 'vol_per_day', 'cost']]
 
     new = df['item_type'].str.split(',', n = 1, expand = True)
     df['item_type'] = new[0]
+
+
 
     df['profit rank'] = df['profit'].rank() * (1,3)['profit' in emphasized]
     df['profit percent rank'] = df['profit_percent'].rank() * (1,3)['profit_percent' in emphasized]
     df['total volume rank'] = df['total_volume'].rank() * (1,3)['total_volume' in emphasized]
     df['num days rank'] = df['num_days'].rank() * (1,3)['num_days' in emphasized]
     #df['cost rank'] = df['num_days'].rank(ascending=False) * (1,3)['cost' in emphasized]
-    df['fit count rank'] = df['count'].rank() * (1,3)['count' in emphasized]
+    #df['fit count rank'] = df['count'].rank() * (1,3)['count' in emphasized]
     df['vol_per_day_rank'] = df['vol_per_day'].rank() * (1,3)['vol_per_day' in emphasized]
 
     df['total rank'] = df['profit rank'] * 2 + df['profit percent rank'] + \
@@ -81,12 +86,19 @@ def get_ranked_items():
 
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.dropna()
+    df = df.round(2)
 
-    df = df[df['profit']>4000000]
+    #df = df[df['profit']>1000000]
+    #df = df[df['item_type']=='Pilots Services']
+
+
+
+
     df['buy_price'] = round(df['buy_price'])
     df['profit'] = round(df['profit'])
 
     df['buy_price'] = df.apply(lambda x: "{:,}".format(x['buy_price']), axis=1)
+    df['avg'] = df.apply(lambda x: "{:,}".format(x['avg']), axis=1)
     df['profit'] = df.apply(lambda x: "{:,}".format(x['profit']), axis=1)
     '''
     for key, row in df.iterrows():
@@ -124,7 +136,8 @@ def get_ranked_items():
 
     df = df.sort_values(by=['total rank'])
     #print(df)
-    df = df.head(100)
+
+    df = df.head(200)
 
     return df.to_json(orient='records')
 

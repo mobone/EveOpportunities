@@ -29,6 +29,84 @@ request_json = '''
                   }
                 }
                 '''
+
+'''
+Example output
+{
+  "id": 4096,
+  "result": {
+    "id": 674902,
+    "created": "2020-11-25T22:49:38.7129305Z",
+    "expires": "2020-12-25T22:49:38.7129305Z",
+    "code": "QIDzas",
+    "designation": 100,
+    "pricing": 200,
+    "pricePercentage": 1,
+    "comment": "",
+    "isCompactized": true,
+    "input": "praetor II",
+    "failures": "",
+    "pricerMarket_id": 2,
+    "pricerMarket_name": "Jita",
+    "totalVolume": 25,
+    "totalBuyPrice": 1620000,
+    "totalSplitPrice": 1751000,
+    "totalSellPrice": 1882000,
+    "items": [
+      {
+        "id": 3619956,
+        "itemType_eid": 2195,
+        "amount": 1,
+        "buyPriceMin": 1999,
+        "buyPriceAverage": 920124.3059839605,
+        "buyPriceMedian": 1410000,
+        "buyPriceStdDev": 708608.6157313526,
+        "buyPriceMax": 1620000,
+        "buyPriceAverage5": 1850000,
+        "buyPriceAverage30": 1889000,
+        "buyPriceMedian5": 1618800,
+        "buyPriceMedian30": 1664900,
+        "buyOrderCount": 22,
+        "buyVolume": 3242,
+        "splitPriceMedian5": 1749000,
+        "splitPriceMedian30": 1751500,
+        "sellPriceMin": 1882000,
+        "sellPriceAverage": 3104992.081683684,
+        "sellPriceMedian": 2475000,
+        "sellPriceStdDev": 1649907.6748393432,
+        "sellPriceMax": 22860000,
+        "sellPriceAverage5": 1850000,
+        "sellPriceAverage30": 1889000,
+        "sellPriceMedian5": 1618800,
+        "sellPriceMedian30": 1889000,
+        "sellOrderCount": 44,
+        "sellVolume": 4799,
+        "volume": 25,
+        "volumeTotal": 25,
+        "splitPrice": 1751000,
+        "splitPriceAverage5": 1850000,
+        "splitPriceAverage30": 1889000,
+        "buyPriceTotal": 1620000,
+        "splitPriceTotal": 1751000,
+        "sellPriceTotal": 1882000,
+        "buyPriceAverage30Delta": -0.14240338803599784,
+        "splitPriceAverage30Delta": -0.07305452620434094,
+        "sellPriceAverage30Delta": -0.0037056643726839367,
+        "buyPriceMedian30Delta": -0.02696858670190405,
+        "splitPriceMedian30Delta": -0.00028546959748787515,
+        "sellPriceMedian30Delta": -0.0037056643726839367,
+        "itemType": {
+          "eid": 2195,
+          "name": "Praetor II",
+          "description": "Heavy Attack Drone",
+          "volume": 25,
+          "packagedVolume": 25
+        }
+      }
+    ]
+  }
+}
+'''
 s = requests.Session()
 
 def check_in_bad(type_id, item_name):
