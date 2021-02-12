@@ -7,7 +7,7 @@ module.exports = function(app) {
     app.get("/api/profit-table", function(req, res){
         
         try {
-            axios.get("http://13.58.61.47:5000/api/v1/items/ranked?emphasized=profit,profit%20percent&history_region_id=Etherium_Reach_10000027")
+            axios.get("http://73.164.50.141:5000/api/v1/items/ranked?emphasized=profit,profit%20percent&history_region_id=Etherium_Reach_10000027")
             .then((response)=> {
             console.log(response.data);
             res.json(response.data);
