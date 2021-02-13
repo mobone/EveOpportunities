@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -21,6 +21,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
+
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -63,22 +65,28 @@ function createData(
   return { item_name, item_type, price, profit, percent, volume, days };
 }
 
-const rows = [
-  createData(
-    "Large Skill Injector",
-    "Pilots Services",
-    "606,000,000",
-    "114,330,511",
-    "18%",
-    4,
-    15
-  )
-];
+// const rows = [
+//   createData(
+//     "Large Skill Injector",
+//     "Pilots Services",
+//     "606,000,000",
+//     "114,330,511",
+//     "18%",
+//     4,
+//     15
+//   )
+// ];
 
 export default function SearchForm() {
   const classes = useStyles();
   const [region, setRegion] = React.useState("");
   const [hub, setHub] = React.useState("");
+  const [rows, setRows] = useState([]);
+  const [form, setForm] = useState({
+    hub: "",
+    region: "",
+    profit: ""
+  });
 
   const [state, setState] = React.useState({
     checkedCharges: true,
@@ -96,13 +104,30 @@ export default function SearchForm() {
     checkedDays: false
   });
 
-  const handleRegionChange = (event) => {
-    setRegion(event.target.value);
-  };
+  // useEffect(() => {
+  //   axios.get("http://73.164.50.141:5000/api/v1/items/ranked?history_region_id=Etherium_Reach_10000027")
+  //   .then(response => {
+  //     console.log(response.data);
+  //     setRows(response.data);
+  //   })
+    
+  // }, []);
 
-  const handleHubChange = (event) => {
-    setHub(event.target.value);
-  };
+  const handleFormChange = (event) => {
+   console.log(event.target)
+
+    setForm({ ...form, [event.target.name]: event.target.value })
+    
+  }
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`)
+    .then(res => {
+      setRows(res.data);
+    })
+  }
 
   const handleItemTypeChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
@@ -130,14 +155,15 @@ export default function SearchForm() {
           <Typography variant="h6" component="h2">
             Region Search
           </Typography>
-          <form className={classes.textBox} noValidate autoComplete="off">
+          <form className={classes.textBox} noValidate autoComplete="off" onSubmit={handleFormSubmit}>
             <FormControl className={classes.formControl}>
               <InputLabel id="from-hub-label">From Hub</InputLabel>
               <Select
                 labelId="from-hub-label"
                 id="from-hub"
-                value={hub}
-                onChange={handleHubChange}
+                value={form.hub}
+                name="hub"
+                onChange={handleFormChange}
               >
                 <MenuItem value={"jita"}>Jita</MenuItem>
                 <MenuItem value={"amarr"}>Amarr</MenuItem>
@@ -152,8 +178,9 @@ export default function SearchForm() {
               <Select
                 labelId="to-region-label"
                 id="to-region-select"
-                value={region}
-                onChange={handleRegionChange}
+                value={form.region}
+                name="region"
+                onChange={handleFormChange}
               >
                 <MenuItem value={"Aridia"}>Aridia</MenuItem>
                 <MenuItem value={"Black Rise"}>Black Rise</MenuItem>
@@ -230,10 +257,12 @@ export default function SearchForm() {
               required
               id="standard-required"
               label="Minimum Profit"
-              defaultValue="1,000,000"
+              name="profit"
+              value={form.profit}
+              onChange={handleFormChange}
             />
 
-            <Button variant="contained" color="primary">
+            <Button type="submit" variant="contained" color="primary">
               Search
             </Button>
           </form>
@@ -397,6 +426,7 @@ export default function SearchForm() {
             <p> </p>
           </div>
           <div>
+            
             <TableContainer component={Paper} elevation={3}>
               <Table className={classes.table} aria-label="Region Profits">
                 <TableHead>
@@ -405,6 +435,7 @@ export default function SearchForm() {
 
                     <TableCell align="right">Type</TableCell>
                     <TableCell align="right">Buy Price</TableCell>
+                    <TableCell align="right">Avg Sell Price</TableCell>
                     <TableCell align="right">Profit</TableCell>
                     <TableCell align="right">%</TableCell>
                     <Tooltip title="Volume over the last 30 Days">
@@ -417,17 +448,20 @@ export default function SearchForm() {
                 </TableHead>
                 <TableBody>
                   {rows.map((row) => (
-                    <TableRow key={row.item_name}>
+                    <TableRow key={row.item_id}>
                       <TableCell component="th" scope="row">
                         {row.item_name}
                       </TableCell>
-
+                    {/* //price
+                    //avg
+                    //profit */}
                       <TableCell align="right">{row.item_type}</TableCell>
-                      <TableCell align="right">{row.price}</TableCell>
+                      <TableCell align="right">{row.buy_price}</TableCell>
+                      <TableCell align="right">{row.avg}</TableCell>
                       <TableCell align="right">{row.profit}</TableCell>
-                      <TableCell align="right">{row.percent}</TableCell>
-                      <TableCell align="right">{row.volume}</TableCell>
-                      <TableCell align="right">{row.days}</TableCell>
+                      <TableCell align="right">{row.profit_percent}</TableCell>
+                      <TableCell align="right">{row.total_volume}</TableCell>
+                      <TableCell align="right">{row.num_days}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
