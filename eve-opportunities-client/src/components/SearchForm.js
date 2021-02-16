@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -64,42 +65,29 @@ export default function SearchForm() {
     days: false,
   });
   const [itemTypes, setItemTypes] = useState({
-    ammunition_charges: false,
-    drones: false,
-    implants_boosters: false,
-    pilots_services: false,
-    planetary_infrastructure: false,
-    ship_mod_mods: false,
-    ship_equipment: false,
-    ships: false,
-    structures: false
+    ammunition_charges: true,
+    drones: true,
+    implants_boosters: true,
+    pilots_services: true,
+    planetary_infrastructure: true,
+    ship_mod_mods: true,
+    ship_equipment: true,
+    ships: true,
+    structures: true
   });
   const [form, setForm] = useState({
     hub: "",
     region: "",
-    profit: ""
+    profit: 1000000
   });
+  const history = useHistory();
 
-  const [state, setState] = React.useState({
-    valueCharges: true,
-    valueDrones: true,
-    valueImplants: true,
-    valueServices: true,
-    valuePI: true,
-    valueModules: true,
-    valueEquipment: true,
-    valueShips: true,
-    valueStructures: true,
-    valueProfit: false,
-    valueProfitPercent: false,
-    valueVolume: false,
-    valueDays: false
-  });
-
-   useEffect(() => {
-    console.log(emphasize, itemTypes);
-    
-  }, [emphasize, itemTypes]);
+  
+  //  useEffect(() => {
+  //   if(emphasize || itemTypes) {
+  //     console.log(url);
+  //   }
+  // }, [form, emphasize, itemTypes]);
 
   const handleFormChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
@@ -111,12 +99,18 @@ export default function SearchForm() {
 
   const handleItemTypeChange = (event) => {
     setItemTypes({ ...itemTypes, [event.target.name]: event.target.value })
+ 
   }
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`)
+   // history.push(`/ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`)
+    getData(form.region, form.hub, form.profit)
+  }
+
+  function getData(region, hub, profit) {
+    axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${region}&hub=${hub}&min_profit=${profit}`)
     .then(res => {
       setRows(res.data);
     })
