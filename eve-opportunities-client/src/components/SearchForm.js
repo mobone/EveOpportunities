@@ -53,35 +53,27 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(
-  item_name,
-  item_type,
-  price,
-  profit,
-  percent,
-  volume,
-  days
-) {
-  return { item_name, item_type, price, profit, percent, volume, days };
-}
-
-// const rows = [
-//   createData(
-//     "Large Skill Injector",
-//     "Pilots Services",
-//     "606,000,000",
-//     "114,330,511",
-//     "18%",
-//     4,
-//     15
-//   )
-// ];
 
 export default function SearchForm() {
   const classes = useStyles();
-  const [region, setRegion] = React.useState("");
-  const [hub, setHub] = React.useState("");
   const [rows, setRows] = useState([]);
+  const [emphasize, setEmphasize] = useState({
+    profit: false,
+    profit_percent: false,
+    volume: false,
+    days: false,
+  });
+  const [itemTypes, setItemTypes] = useState({
+    ammunition_charges: false,
+    drones: false,
+    implants_boosters: false,
+    pilots_services: false,
+    planetary_infrastructure: false,
+    ship_mod_mods: false,
+    ship_equipment: false,
+    ships: false,
+    structures: false
+  });
   const [form, setForm] = useState({
     hub: "",
     region: "",
@@ -89,35 +81,36 @@ export default function SearchForm() {
   });
 
   const [state, setState] = React.useState({
-    checkedCharges: true,
-    checkedDrones: true,
-    checkedImplants: true,
-    checkedServices: true,
-    checkedPI: true,
-    checkedModules: true,
-    checkedEquipment: true,
-    checkedShips: true,
-    checkedStructures: true,
-    checkedProfit: false,
-    checkedProfitPercent: false,
-    checkedVolume: false,
-    checkedDays: false
+    valueCharges: true,
+    valueDrones: true,
+    valueImplants: true,
+    valueServices: true,
+    valuePI: true,
+    valueModules: true,
+    valueEquipment: true,
+    valueShips: true,
+    valueStructures: true,
+    valueProfit: false,
+    valueProfitPercent: false,
+    valueVolume: false,
+    valueDays: false
   });
 
-  // useEffect(() => {
-  //   axios.get("http://73.164.50.141:5000/api/v1/items/ranked?history_region_id=Etherium_Reach_10000027")
-  //   .then(response => {
-  //     console.log(response.data);
-  //     setRows(response.data);
-  //   })
+   useEffect(() => {
+    console.log(emphasize, itemTypes);
     
-  // }, []);
+  }, [emphasize, itemTypes]);
 
   const handleFormChange = (event) => {
-   console.log(event.target)
-
     setForm({ ...form, [event.target.name]: event.target.value })
-    
+  }
+
+  const handleEmphasizeChange = (event) => {
+    setEmphasize({ ...emphasize, [event.target.name]: event.target.value })
+  }
+
+  const handleItemTypeChange = (event) => {
+    setItemTypes({ ...itemTypes, [event.target.name]: event.target.value })
   }
 
   const handleFormSubmit = (event) => {
@@ -129,9 +122,6 @@ export default function SearchForm() {
     })
   }
 
-  const handleItemTypeChange = (event) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
-  };
 
   return (
     <div>
@@ -276,9 +266,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedProfit}
-                onChange={handleItemTypeChange}
-                name="checkedProfit"
+                value={!emphasize.profit}
+                onChange={handleEmphasizeChange}
+                name="profit"
                 color="primary"
               />
             }
@@ -287,9 +277,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedProfitPercent}
-                onChange={handleItemTypeChange}
-                name="checkedProfitPercent"
+                value={!emphasize.profit_percent}
+                onChange={handleEmphasizeChange}
+                name="profit_percent"
                 color="primary"
               />
             }
@@ -298,9 +288,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedVolume}
-                onChange={handleItemTypeChange}
-                name="checkedVolume"
+                value={!emphasize.volume}
+                onChange={handleEmphasizeChange}
+                name="volume"
                 color="primary"
               />
             }
@@ -309,9 +299,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedDays}
-                onChange={handleItemTypeChange}
-                name="checkedDays"
+                value={!emphasize.days}
+                onChange={handleEmphasizeChange}
+                name="days"
                 color="primary"
               />
             }
@@ -323,9 +313,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedCharges}
+                value={!itemTypes.ammunition_charges}
                 onChange={handleItemTypeChange}
-                name="checkedCharges"
+                name="ammunition_charges"
                 color="primary"
               />
             }
@@ -335,9 +325,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedDrones}
+                value={!itemTypes.drones}
                 onChange={handleItemTypeChange}
-                name="checkedDrones"
+                name="drones"
                 color="primary"
               />
             }
@@ -347,9 +337,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedImplants}
+                value={!itemTypes.implants_boosters}
                 onChange={handleItemTypeChange}
-                name="checkedImplants"
+                name="implants_boosters"
                 color="primary"
               />
             }
@@ -358,9 +348,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedServices}
+                value={!itemTypes.pilots_services}
                 onChange={handleItemTypeChange}
-                name="checkedServices"
+                name="pilots_services"
                 color="primary"
               />
             }
@@ -370,9 +360,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedPI}
+                value={!itemTypes.planetary_infrastructure}
                 onChange={handleItemTypeChange}
-                name="checkedPI"
+                name="planetary_infrastructure"
                 color="primary"
               />
             }
@@ -381,9 +371,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedModules}
+                value={!itemTypes.ship_mod_mods}
                 onChange={handleItemTypeChange}
-                name="checkedModules"
+                name="ship_mod_mods"
                 color="primary"
               />
             }
@@ -392,9 +382,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedEquipment}
+                value={!itemTypes.ship_equipment}
                 onChange={handleItemTypeChange}
-                name="checkedEquipment"
+                name="ship_equipment"
                 color="primary"
               />
             }
@@ -403,9 +393,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedShips}
+                value={!itemTypes.ships}
                 onChange={handleItemTypeChange}
-                name="checkedShips"
+                name="ships"
                 color="primary"
               />
             }
@@ -414,9 +404,9 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                checked={state.checkedStructures}
+                value={!itemTypes.structures}
                 onChange={handleItemTypeChange}
-                name="checkedStructures"
+                name="structures"
                 color="primary"
               />
             }
