@@ -11,8 +11,6 @@ import sqlite3
 conn = sqlite3.connect("EveFinder.db")
 
 
-sell_region = '10000027' # F9-FUV
-
 jita_item_url = 'https://janice.e-351.com/api/rpc/v1?m=Appraisal.create'
 request_json = '''
                 {

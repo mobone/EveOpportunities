@@ -82,7 +82,7 @@ export default function SearchForm() {
   });
   const history = useHistory();
 
-  
+
   //  useEffect(() => {
   //   if(emphasize || itemTypes) {
   //     console.log(url);
@@ -98,8 +98,8 @@ export default function SearchForm() {
   }
 
   const handleItemTypeChange = (event) => {
-    setItemTypes({ ...itemTypes, [event.target.name]: event.target.value })
- 
+    setItemTypes({ ...itemTypes, [event.target.name]: event.target.checked })
+
   }
 
   const handleFormSubmit = (event) => {
@@ -119,7 +119,7 @@ export default function SearchForm() {
 
   return (
     <div>
-   
+
       <div>
         <p></p>
       </div>
@@ -309,6 +309,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.ammunition_charges}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.ammunition_charges}
                 name="ammunition_charges"
                 color="primary"
               />
@@ -321,6 +322,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.drones}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.drones}
                 name="drones"
                 color="primary"
               />
@@ -333,6 +335,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.implants_boosters}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.implants_boosters}
                 name="implants_boosters"
                 color="primary"
               />
@@ -344,6 +347,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.pilots_services}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.pilots_services}
                 name="pilots_services"
                 color="primary"
               />
@@ -356,6 +360,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.planetary_infrastructure}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.planetary_infrastructure}
                 name="planetary_infrastructure"
                 color="primary"
               />
@@ -367,6 +372,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.ship_mod_mods}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.ship_mod_mods}
                 name="ship_mod_mods"
                 color="primary"
               />
@@ -378,6 +384,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.ship_equipment}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.ship_equipment}
                 name="ship_equipment"
                 color="primary"
               />
@@ -389,6 +396,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.ships}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.ships}
                 name="ships"
                 color="primary"
               />
@@ -400,6 +408,7 @@ export default function SearchForm() {
               <Checkbox
                 value={!itemTypes.structures}
                 onChange={handleItemTypeChange}
+                checked={itemTypes.structures}
                 name="structures"
                 color="primary"
               />
@@ -410,7 +419,7 @@ export default function SearchForm() {
             <p> </p>
           </div>
           <div>
-            
+
             <TableContainer component={Paper} elevation={3}>
               <Table className={classes.table} aria-label="Region Profits">
                 <TableHead>

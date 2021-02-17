@@ -6,8 +6,15 @@ import sqlite3
 import json
 import numpy as np
 import time
+from flask_cors import CORS, cross_origin
+
+
+
 app = flask.Flask(__name__)
+cors = CORS(app)
 app.config["DEBUG"] = True
+
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/ranked_items', methods = ['GET'])
 def get_ranked_items_page():
@@ -23,19 +30,28 @@ def get_ranked_items():
 
     query_parameters = request.args
 
-    emphasized = query_parameters.get('emphasized')
-    history_region_id = query_parameters.get('history_region_id')
+    emphasize = query_parameters.get('emphasize')
+    region = query_parameters.get('region')
+    hub = query_parameters.get('hub')
 
-    if emphasized:
-        emphasized = emphasized.split(',')
+    min_profit = query_parameters.get('min_profit')
+
+    if emphasize:
+        emphasize = emphasize.split(',')
     else:
-        emphasized = []
+        emphasize = []
 
-    #print(emphasized)
+    regions_df = pd.read_csv("regions.csv")
+    regions_df = regions_df[regions_df['Name']==region.replace(" ","_")]
+
+    history_region_id = str(regions_df['Name'].values[0])+'_'+str(regions_df['ID'].values[0])
+    print('got region id of: ', history_region_id)
+
+    #print(emphasize)
 
     conn = sqlite3.connect('EveFinder.db')
     sql = '''select jita_prices.item_id, jita_prices.item_name, item_details.item_type,
-             item_details.item_volume, jita_prices.buy_price, {0}.avg,
+             item_details.item_volume, jita_prices.buy_price, {0}.min_avg,
              {0}.num_days, {0}.total_volume, popular_fits.count
              from jita_prices  left join {0} on
              {0}.item_id = jita_prices.item_id left join
@@ -47,7 +63,7 @@ def get_ranked_items():
 
     df['cost'] = df['item_volume'].astype(float) * 800
 
-    df['profit'] = df['avg'] - df['buy_price'] - df['cost']
+    df['profit'] = df['min_avg'] - df['buy_price'] - df['cost']
     df['profit_percent'] = df['profit']/df['buy_price']
 
     #df = df[df['profit_percent']>.07]
@@ -56,20 +72,20 @@ def get_ranked_items():
     df['vol_per_day'] = df['total_volume'] / 30.0
     #print(df)
 
-    df = df[['item_id', 'item_name', 'item_type', 'buy_price', 'avg', 'profit', 'profit_percent', 'total_volume', 'num_days', 'item_volume', 'vol_per_day', 'cost']]
+    df = df[['item_id', 'item_name', 'item_type', 'buy_price', 'min_avg', 'profit', 'profit_percent', 'total_volume', 'num_days', 'item_volume', 'vol_per_day', 'cost']]
 
     new = df['item_type'].str.split(',', n = 1, expand = True)
     df['item_type'] = new[0]
 
 
 
-    df['profit rank'] = df['profit'].rank() * (1,3)['profit' in emphasized]
-    df['profit percent rank'] = df['profit_percent'].rank() * (1,3)['profit_percent' in emphasized]
-    df['total volume rank'] = df['total_volume'].rank() * (1,3)['total_volume' in emphasized]
-    df['num days rank'] = df['num_days'].rank() * (1,3)['num_days' in emphasized]
-    #df['cost rank'] = df['num_days'].rank(ascending=False) * (1,3)['cost' in emphasized]
-    #df['fit count rank'] = df['count'].rank() * (1,3)['count' in emphasized]
-    df['vol_per_day_rank'] = df['vol_per_day'].rank() * (1,3)['vol_per_day' in emphasized]
+    df['profit rank'] = df['profit'].rank() * (1,3)['profit' in emphasize]
+    df['profit percent rank'] = df['profit_percent'].rank() * (1,3)['profit_percent' in emphasize]
+    df['total volume rank'] = df['total_volume'].rank() * (1,3)['total_volume' in emphasize]
+    df['num days rank'] = df['num_days'].rank() * (1,3)['num_days' in emphasize]
+    #df['cost rank'] = df['num_days'].rank(ascending=False) * (1,3)['cost' in emphasize]
+    #df['fit count rank'] = df['count'].rank() * (1,3)['count' in emphasize]
+    df['vol_per_day_rank'] = df['vol_per_day'].rank() * (1,3)['vol_per_day' in emphasize]
 
     df['total rank'] = df['profit rank'] * 2 + df['profit percent rank'] + \
                        df['total volume rank'] + df['num days rank']
@@ -88,7 +104,7 @@ def get_ranked_items():
     df = df.dropna()
     df = df.round(2)
 
-    #df = df[df['profit']>1000000]
+    df = df[df['profit']>float(min_profit)]
     #df = df[df['item_type']=='Pilots Services']
 
 
@@ -98,8 +114,9 @@ def get_ranked_items():
     df['profit'] = round(df['profit'])
 
     df['buy_price'] = df.apply(lambda x: "{:,}".format(x['buy_price']), axis=1)
-    df['avg'] = df.apply(lambda x: "{:,}".format(x['avg']), axis=1)
+    df['min_avg'] = df.apply(lambda x: "{:,}".format(x['min_avg']), axis=1)
     df['profit'] = df.apply(lambda x: "{:,}".format(x['profit']), axis=1)
+    df['avg'] = df['min_avg']
     '''
     for key, row in df.iterrows():
 
