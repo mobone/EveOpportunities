@@ -64,6 +64,8 @@ export default function SearchForm() {
     volume: false,
     days: false,
   });
+  
+
   const [itemTypes, setItemTypes] = useState({
     ammunition_charges: true,
     drones: true,
@@ -75,42 +77,68 @@ export default function SearchForm() {
     ships: true,
     structures: true
   });
+  
   const [form, setForm] = useState({
     hub: "",
     region: "",
     profit: 1000000
   });
   const history = useHistory();
+  const [queryParam, setQueryParam] = useState("");
+  const [paramArray, setParamArray] = useState([]);
+  
 
+   useEffect(() => {
+     if (queryParam.length <= 0) {
+        return;
+     } else {
+      // checkForTrue(emphasize);
+      getData(queryParam);
+     }
 
-  //  useEffect(() => {
-  //   if(emphasize || itemTypes) {
-  //     console.log(url);
-  //   }
-  // }, [form, emphasize, itemTypes]);
+     
+    
+  }, [queryParam, emphasize]);
 
   const handleFormChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
   }
 
+
+ 
   const handleEmphasizeChange = (event) => {
+    console.log(history);
+    if (event.target.value === "true" ) {
+      if(!history.location.search.includes("&emphasize")) {
+        history.push(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}&emphasize=${event.target.name}`)
+      }
+      else {
+        history.push(history.location.search + "," + event.target.name)
+      }
+    }
+
     setEmphasize({ ...emphasize, [event.target.name]: event.target.value })
+    
+    
   }
+  
 
   const handleItemTypeChange = (event) => {
     setItemTypes({ ...itemTypes, [event.target.name]: event.target.checked })
 
   }
 
+  
+
   const handleFormSubmit = (event) => {
     event.preventDefault();
-
-   // history.push(`/ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`)
-    getData(form.region, form.hub, form.profit)
+    history.push(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`);
+    setQueryParam(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`);
   }
 
-  function getData(region, hub, profit) {
-    axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${region}&hub=${hub}&min_profit=${profit}`)
+  function getData(query) {
+    console.log("QUERY!", query);
+    axios.get(`http://73.164.50.141:5000/api/v1/items/ranked${history.location.search}`)
     .then(res => {
       setRows(res.data);
     })
