@@ -81,11 +81,11 @@ def get_ranked_items():
 
     df['profit rank'] = df['profit'].rank() * (1,3)['profit' in emphasize]
     df['profit percent rank'] = df['profit_percent'].rank() * (1,3)['profit_percent' in emphasize]
-    df['total volume rank'] = df['total_volume'].rank() * (1,3)['total_volume' in emphasize]
+    df['total volume rank'] = df['total_volume'].rank() * (1,3)['volume' in emphasize]
     df['num days rank'] = df['num_days'].rank() * (1,3)['num_days' in emphasize]
     #df['cost rank'] = df['num_days'].rank(ascending=False) * (1,3)['cost' in emphasize]
     #df['fit count rank'] = df['count'].rank() * (1,3)['count' in emphasize]
-    df['vol_per_day_rank'] = df['vol_per_day'].rank() * (1,3)['vol_per_day' in emphasize]
+    #df['vol_per_day_rank'] = df['vol_per_day'].rank() * (1,3)['vol_per_day' in emphasize]
 
     df['total rank'] = df['profit rank'] * 2 + df['profit percent rank'] + \
                        df['total volume rank'] + df['num days rank']
