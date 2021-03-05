@@ -197,7 +197,7 @@ export default function SearchForm() {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     history.replace(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}`);
-    //setQueryParam(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}`);
+    getData();
   }
 
   function getData(query) {
