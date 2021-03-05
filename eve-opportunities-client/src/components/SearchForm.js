@@ -64,7 +64,7 @@ export default function SearchForm() {
     volume: false,
     days: false,
   });
-  
+
 
   const [itemTypes, setItemTypes] = useState({
     ammunition_charges: true,
@@ -77,7 +77,7 @@ export default function SearchForm() {
     ships: true,
     structures: true
   });
-  
+
   const [form, setForm] = useState({
     hub: "",
     region: "",
@@ -87,7 +87,8 @@ export default function SearchForm() {
   const history = useHistory();
   const [queryParam, setQueryParam] = useState(window.location.search);
   const [paramArray, setParamArray] = useState([]);
-  
+
+
 
 
    useEffect(() => {
@@ -100,12 +101,13 @@ export default function SearchForm() {
     
   }, [queryParam, emph, form]);
 
+
   const handleFormChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
   }
 
 
- 
+
   const handleEmphasizeChange = (event) => {
     // let booleanValue = Boolean(event.target.value)
     setEmph({...emph, [event.target.name]: (event.target.value == "true")})
@@ -190,7 +192,7 @@ export default function SearchForm() {
     setItemTypes({ ...itemTypes, [event.target.name]: event.target.checked })
   }
 
-  
+
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -511,7 +513,7 @@ export default function SearchForm() {
           <div>
 
             <TableContainer component={Paper} elevation={3}>
-              <Table className={classes.table} aria-label="Region Profits">
+              <Table className={classes.table} size="small" aria-label="Region Profits">
                 <TableHead>
                   <TableRow>
                     <TableCell>Name</TableCell>

@@ -60,13 +60,14 @@ def get_ranked_items():
           '''
 
     df = pd.read_sql(sql.format(history_region_id), conn)
-
-    df['cost'] = df['item_volume'].astype(float) * 800
+    #df = df[df['item_name'].str.contains("Crystal ")]
+    df['cost'] = df['item_volume'].astype(float) * 500
 
     df['profit'] = df['min_avg'] - df['buy_price'] - df['cost']
     df['profit_percent'] = df['profit']/df['buy_price']
 
-    #df = df[df['profit_percent']>.07]
+
+    #df = df[df['profit_percent']>.0325]
     df['profit_percent'] = df['profit_percent'] * 100
 
     df['vol_per_day'] = df['total_volume'] / 30.0
@@ -82,7 +83,7 @@ def get_ranked_items():
     df['profit rank'] = df['profit'].rank() * (1,3)['profit' in emphasize]
     df['profit percent rank'] = df['profit_percent'].rank() * (1,3)['profit_percent' in emphasize]
     df['total volume rank'] = df['total_volume'].rank() * (1,3)['volume' in emphasize]
-    df['num days rank'] = df['num_days'].rank() * (1,3)['num_days' in emphasize]
+    df['num days rank'] = df['num_days'].rank() * (1,3)['days' in emphasize]
     #df['cost rank'] = df['num_days'].rank(ascending=False) * (1,3)['cost' in emphasize]
     #df['fit count rank'] = df['count'].rank() * (1,3)['count' in emphasize]
     #df['vol_per_day_rank'] = df['vol_per_day'].rank() * (1,3)['vol_per_day' in emphasize]
