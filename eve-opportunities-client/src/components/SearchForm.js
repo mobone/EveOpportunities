@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SearchForm() {
   const classes = useStyles();
   const [rows, setRows] = useState([]);
-  const [emphasize, setEmphasize] = useState({
+  const [emph, setEmph] = useState({
     profit: false,
     profit_percent: false,
     volume: false,
@@ -81,24 +81,24 @@ export default function SearchForm() {
   const [form, setForm] = useState({
     hub: "",
     region: "",
-    profit: 1000000
+    min_profit: 1000000,
+    emphasize: []
   });
   const history = useHistory();
   const [queryParam, setQueryParam] = useState(window.location.search);
   const [paramArray, setParamArray] = useState([]);
   
 
-   useEffect(() => {
-     if (queryParam.length <= 0) {
-        return;
-     } else {
-      // checkForTrue(emphasize);
-      getData(queryParam);
-     }
 
+   useEffect(() => {
      
+      // checkForTrue(emphasize);
+      if (queryParam.length > 0) {
+        setFormFromQuery();        
+      }
+      console.log("useEffect", emph)
     
-  }, [queryParam, emphasize]);
+  }, [queryParam, emph, form]);
 
   const handleFormChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
@@ -107,37 +107,99 @@ export default function SearchForm() {
 
  
   const handleEmphasizeChange = (event) => {
-    console.log(history);
-    if (event.target.value === "true" ) {
+    // let booleanValue = Boolean(event.target.value)
+    setEmph({...emph, [event.target.name]: (event.target.value == "true")})
+    
+   
+    if (event.target.value === "true" || event.target.value === true) {
+      console.log("checked")
+      let arr = [];
+      arr.push(form.emphasize);
+      arr.push(event.target.name);
+
+      setForm({...form, emphasize: [arr]});
+
       if(!history.location.search.includes("&emphasize")) {
-        history.push(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}&emphasize=${event.target.name}`)
+        history.push(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}&emphasize=${event.target.name}`)
+        
       }
       else {
-        history.push(history.location.search + "," + event.target.name)
+        let search = history.location.search + "," + event.target.name
+        search = search.replace("emphasize=,", "emphasize=" )
+        history.push(search)
+       
+       
       }
-    }
+      
+      setFormFromQuery();
+    } else {
+      console.log("unchecked")
+      let obj = {};
 
-    setEmphasize({ ...emphasize, [event.target.name]: event.target.value })
-    
-    
+      let result = window.location.search.split("&");
+      result.forEach(item => {
+        let splitParams = item.split("=")
+        
+        splitParams[0] = splitParams[0].replace("?", "")
+        splitParams[1] = splitParams[1].replace("%20", " ");
+        obj[splitParams[0]] = splitParams[1];
+        
+        
+      });
+      
+      obj.emphasize = obj.emphasize.split(",");
+      
+      
+      let indexOfUnchecked = obj.emphasize.indexOf(event.target.name);
+      if (indexOfUnchecked >= 0) {
+        obj.emphasize.splice(indexOfUnchecked, 1);
+       
+      }
+      
+     
+      history.replace(`ranked?region=${obj.region}&hub=${obj.hub}&min_profit=${obj.min_profit}&emphasize=${obj.emphasize}`)
+
+    }
+         
   }
+
   
+  function setFormFromQuery() {
+    let obj = {};
+    let result = window.location.search.split("&");
+        result.forEach(item => {
+          let splitParams = item.split("=")
+          
+          splitParams[0] = splitParams[0].replace("?", "")
+          splitParams[1] = splitParams[1].replace("%20", " ");
+          obj[splitParams[0]] = splitParams[1];
+          
+          
+        });
+        if (obj.hasOwnProperty("emphasize")) {
+          obj.emphasize = [...form.emphasize]
+        } else {
+          obj.emphasize = [];
+        }
+        setForm({...obj})
+        
+        getData(queryParam);
+  }
 
   const handleItemTypeChange = (event) => {
     setItemTypes({ ...itemTypes, [event.target.name]: event.target.checked })
-
   }
 
   
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    history.push(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`);
-    setQueryParam(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.profit}`);
+    history.replace(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}`);
+    //setQueryParam(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}`);
   }
 
   function getData(query) {
-    console.log("QUERY!", query);
+    
     axios.get(`http://73.164.50.141:5000/api/v1/items/ranked${history.location.search}`)
     .then(res => {
       setRows(res.data);
@@ -270,7 +332,7 @@ export default function SearchForm() {
               id="standard-required"
               label="Minimum Profit"
               name="profit"
-              value={form.profit}
+              value={form.min_profit}
               onChange={handleFormChange}
             />
 
@@ -288,7 +350,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emphasize.profit}
+                value={!emph.profit}
                 onChange={handleEmphasizeChange}
                 name="profit"
                 color="primary"
@@ -299,7 +361,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emphasize.profit_percent}
+                value={!emph.profit_percent}
                 onChange={handleEmphasizeChange}
                 name="profit_percent"
                 color="primary"
@@ -310,7 +372,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emphasize.volume}
+                value={!emph.volume}
                 onChange={handleEmphasizeChange}
                 name="volume"
                 color="primary"
@@ -321,7 +383,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emphasize.days}
+                value={!emph.days}
                 onChange={handleEmphasizeChange}
                 name="days"
                 color="primary"
