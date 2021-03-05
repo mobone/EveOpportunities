@@ -84,7 +84,7 @@ export default function SearchForm() {
     profit: 1000000
   });
   const history = useHistory();
-  const [queryParam, setQueryParam] = useState("");
+  const [queryParam, setQueryParam] = useState(window.location.search);
   const [paramArray, setParamArray] = useState([]);
   
 
