@@ -42,6 +42,7 @@ def get_ranked_items():
         emphasize = []
 
     regions_df = pd.read_csv("regions.csv")
+
     regions_df = regions_df[regions_df['Name']==region.replace(" ","_")]
 
     history_region_id = str(regions_df['Name'].values[0])+'_'+str(regions_df['ID'].values[0])
@@ -59,7 +60,7 @@ def get_ranked_items():
              left join popular_fits on popular_fits.item_id = jita_prices.item_id;
           '''
 
-    df = pd.read_sql(sql.format(history_region_id), conn)
+    df = pd.read_sql(sql.format(history_region_id.replace('-','_')), conn)
     #df = df[df['item_name'].str.contains("Crystal ")]
     df['cost'] = df['item_volume'].astype(float) * 500
 

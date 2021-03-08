@@ -123,6 +123,6 @@ if __name__ == '__main__':
         df = df.dropna()
         print(df)
         print()
-        df.to_sql(region_row['Name']+'_'+str(region_row['ID']), conn, index=False, if_exists='replace')
+        df.to_sql(region_row['Name'].replace("-","_")+'_'+str(region_row['ID']), conn, index=False, if_exists='replace')
         end_time = time.time()
         print("time: ", end_time - start_time)
