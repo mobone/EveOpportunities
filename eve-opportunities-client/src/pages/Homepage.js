@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import SearchForm from "../components/SearchForm";
+import SearchFormNew from "../components/searchFormNew"
 
 function Homepage() {
 
     return(
         <div>
-            <SearchForm />
+            <SearchFormNew />
         </div>
     )
 }

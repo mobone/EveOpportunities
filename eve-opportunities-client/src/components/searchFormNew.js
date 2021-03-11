@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import {
+    useQueryParams,
+    StringParam,
+    NumberParam,
+    ArrayParam,
+    withDefault,
+  } from 'use-query-params';
+import axios from "axios";
+
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -18,218 +26,105 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { Container } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
-import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2)
-  },
-  textBox: {
-    "& > *": {
+    formControl: {
       margin: theme.spacing(1),
-      width: "25ch"
-    }
-  },
-
-  table: {
-    minWidth: 450
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  title: {
-    flexGrow: 1
-  },
-  root: {
-    flexGrow: 1
-  }
-}));
-
-
-export default function SearchForm() {
-  const classes = useStyles();
-  const [rows, setRows] = useState([]);
-  const [emph, setEmph] = useState({
-    profit: false,
-    profit_percent: false,
-    volume: false,
-    days: false,
-  });
-
-
-  const [itemTypes, setItemTypes] = useState({
-    ammunition_charges: true,
-    drones: true,
-    implants_boosters: true,
-    pilots_services: true,
-    planetary_infrastructure: true,
-    ship_mod_mods: true,
-    ship_equipment: true,
-    ships: true,
-    structures: true
-  });
-
-  const [form, setForm] = useState({
-    hub: "",
-    region: "",
-    min_profit: 1000000,
-    emphasize: []
-  });
-  const history = useHistory();
-  const [queryParam, setQueryParam] = useState(window.location.search);
-  const [paramArray, setParamArray] = useState([]);
-
-
-
-
-   useEffect(() => {
-     
-      // checkForTrue(emphasize);
-      if (queryParam.length > 0) {
-        setFormFromQuery();   
-          
+      minWidth: 120
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2)
+    },
+    textBox: {
+      "& > *": {
+        margin: theme.spacing(1),
+        width: "25ch"
       }
-      
-    
-  }, [queryParam]);
-
-
-  const handleFormChange = (event) => {
-    setForm({ ...form, [event.target.name]: event.target.value })
-  }
-
-
-
-  const handleEmphasizeChange = (event) => {
-    // let booleanValue = Boolean(event.target.value)
-    setEmph({...emph, [event.target.name]: (event.target.value == "true")})
-    
-   
-    if (event.target.value === "true" || event.target.value === true) {
-      console.log("checked")
-      let arr = [];
-      arr.push(form.emphasize);
-      arr.push(event.target.name);
-
-      setForm({...form, emphasize: [arr]});
-
-      if(!history.location.search.includes("&emphasize")) {
-        history.push(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}&emphasize=${event.target.name}`)
-        
-      }
-      else {
-        let search = history.location.search + "," + event.target.name
-        search = search.replace("emphasize=,", "emphasize=" )
-        history.push(search)
-        
-       
-      }
-      
-      
-      
-
-    } else {
-      console.log("unchecked")
-      let obj = {};
-
-      let result = window.location.search.split("&");
-      result.forEach(item => {
-        let splitParams = item.split("=")
-        
-        splitParams[0] = splitParams[0].replace("?", "")
-        splitParams[1] = splitParams[1].replace("%20", " ");
-        obj[splitParams[0]] = splitParams[1];
-        
-        
-      });
-      
-      obj.emphasize = obj.emphasize.split(",");
-      
-      
-      let indexOfUnchecked = obj.emphasize.indexOf(event.target.name);
-      if (indexOfUnchecked >= 0) {
-        obj.emphasize.splice(indexOfUnchecked, 1);
-       
-      }
-      
-     
-      history.replace(`ranked?region=${obj.region}&hub=${obj.hub}&min_profit=${obj.min_profit}&emphasize=${obj.emphasize}`)
-
-    }
-      setFormFromQuery();
-  }
-
+    },
   
-  function setFormFromQuery() {
-    let obj = {};
-    let result = window.location.search.split("&");
-        result.forEach(item => {
-          let splitParams = item.split("=")
-          
-          splitParams[0] = splitParams[0].replace("?", "")
-          splitParams[1] = splitParams[1].replace("%20", " ");
-          obj[splitParams[0]] = splitParams[1];
-          
-          
-        });
-        if (obj.hasOwnProperty("emphasize")) {
-          obj.emphasize = [...form.emphasize]
-        } else {
-          obj.emphasize = [];
-        }
-        setForm({...obj})
-        getData();
-        
-  }
+    table: {
+      minWidth: 450
+    },
+    menuButton: {
+      marginRight: theme.spacing(2)
+    },
+    title: {
+      flexGrow: 1
+    },
+    root: {
+      flexGrow: 1
+    }
+  }));
 
-  const handleItemTypeChange = (event) => {
-    setItemTypes({ ...itemTypes, [event.target.name]: event.target.checked })
-  }
-
-
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    history.replace(`ranked?region=${form.region}&hub=${form.hub}&min_profit=${form.min_profit}`);
-    getData();
-  }
-
-  function getData(query) {
-    
-    axios.get(`http://73.164.50.141:5000/api/v1/items/ranked${history.location.search}`)
-    .then(res => {
-      console.log(res.data);
-      setRows(res.data);
+const SearchFormNew = () => {
+    const classes = useStyles();
+    const [query, setQuery] = useQueryParams({
+        region: StringParam,
+        hub: StringParam,
+        min_profit: NumberParam,
+        emphasize: withDefault(ArrayParam, [])
     })
-  }
+    const [newQuery, setNewQuery] = useState({
+        hub: "",
+        region: "",
+        min_profit: 1000000
+    })
+    const [rows, setRows] = useState([]);
+
+    // const [region, hub, min_profit, emphasize] = query
+
+    useEffect(() => {
+        if (query.region !== undefined && query.hub !== undefined && query.min_profit !== undefined) {
+            // updateFromURL();
+        }
+
+    })
 
 
-  return (
-    <div>
+    function handleFormChange(event) {
+        setNewQuery({ ...newQuery, [event.target.name]: event.target.value })
+    }
 
-      <div>
-        <p></p>
-      </div>
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        if (!newQuery.emphasize) {
+            setQuery({...newQuery})
+        }
 
-      <Container maxWidth="lg">
-        <div className={classes.textBox}>
-          <Button variant="contained">Hub to Hub</Button>
-          <Button variant="contained" color="primary">
-            Hub to Region
-          </Button>
-        </div>
+        updateFromURL(newQuery);
+    }
+
+    function updateFromURL(dataObj) { 
+        console.log("update from url")
+        console.log(dataObj)
+        axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${dataObj.region}&hub=${dataObj.hub}&min_profit=${dataObj.min_profit}`)
+        .then(res => {
+            setRows(res.data)
+        })
+    }
+
+    function readFromURL() {
+        console.log("read from url");
+        
+    }
+
+    
+    return (
+        
         <div>
-          <p></p>
-        </div>
+
+        <Container maxWidth="lg">
+            <div className={classes.textBox}>
+            <Button variant="contained">Hub to Hub</Button>
+            <Button variant="contained" color="primary">
+                Hub to Region
+            </Button>
+            </div>
+            <div>
+            <p></p>
+            </div>
 
         <div>
           <Typography variant="h6" component="h2">
@@ -241,7 +136,7 @@ export default function SearchForm() {
               <Select
                 labelId="from-hub-label"
                 id="from-hub"
-                value={form.hub}
+                value={newQuery.hub}
                 name="hub"
                 onChange={handleFormChange}
               >
@@ -258,7 +153,7 @@ export default function SearchForm() {
               <Select
                 labelId="to-region-label"
                 id="to-region-select"
-                value={form.region}
+                value={newQuery.region}
                 name="region"
                 onChange={handleFormChange}
               >
@@ -337,8 +232,8 @@ export default function SearchForm() {
               required
               id="standard-required"
               label="Minimum Profit"
-              name="profit"
-              value={form.min_profit}
+              name="min_profit"
+              value={newQuery.min_profit}
               onChange={handleFormChange}
             />
 
@@ -356,8 +251,8 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emph.profit}
-                onChange={handleEmphasizeChange}
+                
+                checked={query.emphasize.includes("profit")}
                 name="profit"
                 color="primary"
               />
@@ -367,8 +262,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emph.profit_percent}
-                onChange={handleEmphasizeChange}
+                checked={query.emphasize.includes("profit_percent")}
                 name="profit_percent"
                 color="primary"
               />
@@ -378,8 +272,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emph.volume}
-                onChange={handleEmphasizeChange}
+                checked={query.emphasize.includes("volume")}
                 name="volume"
                 color="primary"
               />
@@ -389,8 +282,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!emph.days}
-                onChange={handleEmphasizeChange}
+                checked={query.emphasize.includes("days")}
                 name="days"
                 color="primary"
               />
@@ -403,9 +295,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.ammunition_charges}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.ammunition_charges}
+              checked
                 name="ammunition_charges"
                 color="primary"
               />
@@ -416,9 +306,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.drones}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.drones}
+              checked
                 name="drones"
                 color="primary"
               />
@@ -429,9 +317,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.implants_boosters}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.implants_boosters}
+              checked
                 name="implants_boosters"
                 color="primary"
               />
@@ -441,9 +327,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.pilots_services}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.pilots_services}
+              checked
                 name="pilots_services"
                 color="primary"
               />
@@ -454,9 +338,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.planetary_infrastructure}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.planetary_infrastructure}
+              checked
                 name="planetary_infrastructure"
                 color="primary"
               />
@@ -466,9 +348,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.ship_mod_mods}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.ship_mod_mods}
+              checked
                 name="ship_mod_mods"
                 color="primary"
               />
@@ -478,9 +358,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.ship_equipment}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.ship_equipment}
+                checked
                 name="ship_equipment"
                 color="primary"
               />
@@ -490,9 +368,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.ships}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.ships}
+                checked
                 name="ships"
                 color="primary"
               />
@@ -502,9 +378,7 @@ export default function SearchForm() {
           <FormControlLabel
             control={
               <Checkbox
-                value={!itemTypes.structures}
-                onChange={handleItemTypeChange}
-                checked={itemTypes.structures}
+                checked
                 name="structures"
                 color="primary"
               />
@@ -559,6 +433,9 @@ export default function SearchForm() {
           </div>
         </div>
       </Container>
-    </div>
-  );
+            
+        </div>
+    )
 }
+
+export default SearchFormNew;
