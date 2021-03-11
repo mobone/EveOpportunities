@@ -95,11 +95,12 @@ export default function SearchForm() {
      
       // checkForTrue(emphasize);
       if (queryParam.length > 0) {
-        setFormFromQuery();        
+        setFormFromQuery();   
+          
       }
-      console.log("useEffect", emph)
+      
     
-  }, [queryParam, emph, form]);
+  }, [queryParam]);
 
 
   const handleFormChange = (event) => {
@@ -129,11 +130,13 @@ export default function SearchForm() {
         let search = history.location.search + "," + event.target.name
         search = search.replace("emphasize=,", "emphasize=" )
         history.push(search)
-       
+        
        
       }
       
-      setFormFromQuery();
+      
+      
+
     } else {
       console.log("unchecked")
       let obj = {};
@@ -162,7 +165,7 @@ export default function SearchForm() {
       history.replace(`ranked?region=${obj.region}&hub=${obj.hub}&min_profit=${obj.min_profit}&emphasize=${obj.emphasize}`)
 
     }
-         
+      setFormFromQuery();
   }
 
   
@@ -184,8 +187,8 @@ export default function SearchForm() {
           obj.emphasize = [];
         }
         setForm({...obj})
+        getData();
         
-        getData(queryParam);
   }
 
   const handleItemTypeChange = (event) => {
@@ -204,6 +207,7 @@ export default function SearchForm() {
     
     axios.get(`http://73.164.50.141:5000/api/v1/items/ranked${history.location.search}`)
     .then(res => {
+      console.log(res.data);
       setRows(res.data);
     })
   }
