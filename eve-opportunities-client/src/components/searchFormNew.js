@@ -71,35 +71,62 @@ const SearchFormNew = () => {
         region: "",
         min_profit: 1000000
     })
+
+    const [emphasize, setEmphasize] = useState({
+      profit: false,
+      profit_percent: false,
+      volume: false,
+      days: false,
+    })
     const [rows, setRows] = useState([]);
 
     // const [region, hub, min_profit, emphasize] = query
 
     useEffect(() => {
-        if (query.region !== undefined && query.hub !== undefined && query.min_profit !== undefined) {
-            // updateFromURL();
-        }
+        
+      if(newQuery.hub) {
+        updateURL(emphasize)
+      } else if(window.location.search.length) {
+        readFromURL()
+      }
+      
+      
 
-    })
+    },[emphasize, query])
 
+    function handleEmphasizeChange(event) {
+      let checkedVal = event.target.checked;
+      setEmphasize({ ...emphasize, [event.target.name]: Boolean(checkedVal)})
+      
+    }
 
     function handleFormChange(event) {
         setNewQuery({ ...newQuery, [event.target.name]: event.target.value })
     }
+
+
+    function updateURL(stateObject) {
+       
+      let trueKeys = Object.keys(stateObject).filter(key => stateObject[key] === true) 
+      setQuery({ ...query, emphasize: trueKeys})
+      
+      updateFromURL(query)
+    }
+
 
     function handleFormSubmit(event) {
         event.preventDefault();
         if (!newQuery.emphasize) {
             setQuery({...newQuery})
         }
-
         updateFromURL(newQuery);
     }
+
 
     function updateFromURL(dataObj) { 
         console.log("update from url")
         console.log(dataObj)
-        axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${dataObj.region}&hub=${dataObj.hub}&min_profit=${dataObj.min_profit}`)
+        axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?region=${dataObj.region}&hub=${dataObj.hub}&min_profit=${dataObj.min_profit}&emphasize=${dataObj.emphasize}`)
         .then(res => {
             setRows(res.data)
         })
@@ -107,9 +134,16 @@ const SearchFormNew = () => {
 
     function readFromURL() {
         console.log("read from url");
-        
+        console.log(window.location.search)
+        setNewQuery({ ...query})
+        console.log(query.emphasize)
+        axios.get(`http://73.164.50.141:5000/api/v1/items/ranked?${window.location.search}`)
+        .then(res => {
+          setRows(res.data)
+        })
     }
 
+    
     
     return (
         
@@ -251,8 +285,8 @@ const SearchFormNew = () => {
           <FormControlLabel
             control={
               <Checkbox
-                
-                checked={query.emphasize.includes("profit")}
+                checked={emphasize.profit}
+                onChange={handleEmphasizeChange}
                 name="profit"
                 color="primary"
               />
@@ -262,7 +296,8 @@ const SearchFormNew = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={query.emphasize.includes("profit_percent")}
+                checked={emphasize.profit_percent}
+                onChange={handleEmphasizeChange}
                 name="profit_percent"
                 color="primary"
               />
@@ -272,7 +307,8 @@ const SearchFormNew = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={query.emphasize.includes("volume")}
+                checked={emphasize.volume}
+                onChange={handleEmphasizeChange}
                 name="volume"
                 color="primary"
               />
@@ -282,7 +318,8 @@ const SearchFormNew = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={query.emphasize.includes("days")}
+                checked={emphasize.days}
+                onChange={handleEmphasizeChange}
                 name="days"
                 color="primary"
               />
